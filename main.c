@@ -33,19 +33,19 @@ int main(char* argv, int argc)
     {
         /* Store the key string along side the numerical value so we can free it later */
         value = malloc(sizeof(data_struct_t));
-        snprintf(value->key_string, KEY_MAX_LENGTH, "%s%d", KEY_PREFIX, index);
+        unsigned int l = snprintf(value->key_string, KEY_MAX_LENGTH, "%s%d", KEY_PREFIX, index);
         value->number = index;
 
-        error = hashmap_put(mymap, value->key_string, value);
+        error = hashmap_put(mymap, value->key_string, value, l);
         assert(error==MAP_OK);
     }
 
     /* Now, check all of the expected values are there */
     for (index=0; index<KEY_COUNT; index+=1)
     {
-        snprintf(key_string, KEY_MAX_LENGTH, "%s%d", KEY_PREFIX, index);
+        unsigned int l = snprintf(key_string, KEY_MAX_LENGTH, "%s%d", KEY_PREFIX, index);
 
-        error = hashmap_get(mymap, key_string, (void**)(&value));
+        error = hashmap_get(mymap, key_string, (void**)(&value), l);
 
         /* Make sure the value was both found and the correct number */
         assert(error==MAP_OK);
@@ -53,9 +53,9 @@ int main(char* argv, int argc)
     }
 
     /* Make sure that a value that wasn't in the map can't be found */
-    snprintf(key_string, KEY_MAX_LENGTH, "%s%d", KEY_PREFIX, KEY_COUNT);
+    unsigned int l = snprintf(key_string, KEY_MAX_LENGTH, "%s%d", KEY_PREFIX, KEY_COUNT);
 
-    error = hashmap_get(mymap, key_string, (void**)(&value));
+    error = hashmap_get(mymap, key_string, (void**)(&value), l);
 
     /* Make sure the value was not found */
     assert(error==MAP_MISSING);
@@ -63,12 +63,12 @@ int main(char* argv, int argc)
     /* Free all of the values we allocated and remove them from the map */
     for (index=0; index<KEY_COUNT; index+=1)
     {
-        snprintf(key_string, KEY_MAX_LENGTH, "%s%d", KEY_PREFIX, index);
+        unsigned int l = snprintf(key_string, KEY_MAX_LENGTH, "%s%d", KEY_PREFIX, index);
 
-        error = hashmap_get(mymap, key_string, (void**)(&value));
+        error = hashmap_get(mymap, key_string, (void**)(&value), l);
         assert(error==MAP_OK);
 
-        error = hashmap_remove(mymap, key_string);
+        error = hashmap_remove(mymap, key_string, l);
         assert(error==MAP_OK);
 
         free(value);

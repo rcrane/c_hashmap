@@ -55,17 +55,17 @@ int hashmap_iterate(map_t in, PFany f, any_t item);
 /*
  * Add an element to the hashmap. Return MAP_OK or MAP_OMEM.
  */
-int hashmap_put(map_t in, char* key, any_t value);
+int hashmap_put(map_t in, char* key, any_t value, unsigned int key_len);
 
 /*
  * Get an element from the hashmap. Return MAP_OK or MAP_MISSING.
  */
-int hashmap_get(map_t in, char* key, any_t *arg);
+int hashmap_get(map_t in, char* key, any_t *arg, unsigned int key_len);
 
 /*
  * Remove an element from the hashmap. Return MAP_OK or MAP_MISSING.
  */
-int hashmap_remove(map_t in, char* key);
+int hashmap_remove(map_t in, char* key, unsigned int key_len);
 
 /*
  * Get any element. Return MAP_OK or MAP_MISSING.

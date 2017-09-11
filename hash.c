@@ -2,48 +2,53 @@
 #include "hash.h"
 
 /* A Simple Hash Function */
-unsigned int simple_hash(char *str)
+unsigned int simple_hash(char *str, unsigned int key_len)
 {
 	register unsigned int hash;
 	register unsigned char *p;
+    unsigned int len = key_len;
 
-	for(hash = 0, p = (unsigned char *)str; *p ; p++)
+	for(hash = 0, p = (unsigned char *)str; len > 0 ; p++, len--)
 		hash = 31 * hash + *p;
 
 	return (hash & 0x7FFFFFFF);
 }
 
 /* RS Hash Function */
-unsigned int RS_hash(char *str)
+unsigned int RS_hash(char *str, unsigned int key_len)
 {
          unsigned int b = 378551;
          unsigned int a = 63689;
          unsigned int hash = 0;
+         unsigned int len = key_len;
 
-         while (*str)
+         while (len > 0)
          {
                  hash = hash * a + (*str++);
                  a *= b;
+                 len--;
          }
 
          return (hash & 0x7FFFFFFF);
 }
 
 /* JS Hash Function */
-unsigned int JS_hash(char *str)
+unsigned int JS_hash(char *str, unsigned int key_len)
 {
          unsigned int hash = 1315423911;
+         unsigned int len = key_len;
 
-         while (*str)
+         while (len > 0)
          {
                  hash ^= ((hash << 5) + (*str++) + (hash >> 2));
+                 len--;
          }
         
          return (hash & 0x7FFFFFFF);
 }
 
 /* P. J. Weinberger Hash Function */
-unsigned int PJW_hash(char *str)
+unsigned int PJW_hash(char *str, unsigned int key_len)
 {
          unsigned int BitsInUnignedInt = (unsigned int)(sizeof(unsigned int) * 8);
          unsigned int ThreeQuarters     = (unsigned int)((BitsInUnignedInt   * 3) / 4);
@@ -53,9 +58,12 @@ unsigned int PJW_hash(char *str)
          unsigned int hash              = 0;
          unsigned int test              = 0;
 
-         while (*str)
+         unsigned int len = key_len;
+
+         while (len > 0)
          {
                  hash = (hash << OneEighth) + (*str++);
+                 len--;
                  if ((test = hash & HighBits) != 0)
                  {
                          hash = ((hash ^ (test >> ThreeQuarters)) & (~HighBits));
@@ -66,14 +74,17 @@ unsigned int PJW_hash(char *str)
 }
 
 /* ELF Hash Function */
-unsigned int ELF_hash(char *str)
+unsigned int ELF_hash(char *str, unsigned int key_len)
 {
          unsigned int hash = 0;
          unsigned int x     = 0;
 
-         while (*str)
+         unsigned int len = key_len;
+
+         while (len > 0)
          {
                  hash = (hash << 4) + (*str++);
+                 len--;
                  if ((x = hash & 0xF0000000L) != 0)
                  {
                          hash ^= (x >> 24);
@@ -85,51 +96,59 @@ unsigned int ELF_hash(char *str)
 }
 
 /* BKDR Hash Function */
-unsigned int BKDR_hash(char *str)
+unsigned int BKDR_hash(char *str, unsigned int key_len)
 {
          unsigned int seed = 131; // 31 131 1313 13131 131313 etc..
          unsigned int hash = 0;
+         unsigned int len = key_len;
 
-         while (*str)
+         while (len > 0)
          {
                  hash = hash * seed + (*str++);
+                 len--;
          }
 
          return (hash & 0x7FFFFFFF);
 }
 
 /* SDBM Hash Function */
-unsigned int SDBM_hash(char *str)
+unsigned int SDBM_hash(char *str, unsigned int key_len)
 {
          unsigned int hash = 0;
+         unsigned int len = key_len;
 
-         while (*str)
+         while (len > 0)
          {
                  hash = (*str++) + (hash << 6) + (hash << 16) - hash;
+                 len--;
          }
 
          return (hash & 0x7FFFFFFF);
 }
 
 /* DJB Hash Function */
-unsigned int DJB_hash(char *str)
+unsigned int DJB_hash(char *str, unsigned int key_len)
 {
          unsigned int hash = 5381;
+         unsigned int len = key_len;
 
-         while (*str)
+         while (len > 0)
          {
                  hash += (hash << 5) + (*str++);
+                 len--;
          }
 
          return (hash & 0x7FFFFFFF);
 }
 
 /* AP Hash Function */
-unsigned int AP_hash(char *str)
+unsigned int AP_hash(char *str, unsigned int key_len)
 {
          unsigned int hash = 0;
          int i;
-         for (i=0; *str; i++)
+         unsigned int len = key_len;
+
+         for (i=0; len > 0; i++, len--)
          {
                  if ((i & 1) == 0)
                  {
@@ -145,9 +164,9 @@ unsigned int AP_hash(char *str)
 }
 
 /* CRC Hash Function */
-unsigned int CRC_hash(char *str)
+unsigned int CRC_hash(char *str, unsigned int key_len)
 {
-    unsigned int        nleft   = strlen(str);
+    unsigned int        nleft   = key_len;
     unsigned long long  sum     = 0;
     unsigned short int *w       = (unsigned short int *)str;
     unsigned short int  answer  = 0;
